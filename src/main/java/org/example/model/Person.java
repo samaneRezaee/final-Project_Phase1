@@ -12,6 +12,7 @@ import java.time.LocalDate;
 @AllArgsConstructor
 @Getter
 @Setter
+@Builder
 @ToString(callSuper = true)
 @Inheritance(strategy = InheritanceType.JOINED)
 public class Person extends BaseEntity<Long> {

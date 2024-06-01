@@ -9,8 +9,8 @@ public class Validation {
     public static final Pattern PASSWORD_PATTERN;
     public static final Pattern EMAIL_PATTERN;
     static {
-        FIRSTNAME=Pattern.compile("");
-        LASTNAME=Pattern.compile("");
+        FIRSTNAME=Pattern.compile("^[A-Z][a-z]+$");
+        LASTNAME=Pattern.compile("^[A-Z][a-z]+$");
         PASSWORD_PATTERN=Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*[0-9])(?=.*[@#!%&*])[A-Za-z0-9@#!%&*]{8,10}$");
         EMAIL_PATTERN=Pattern.compile("^[a-zA-Z0-9].[a-zA-Z0-9\\._%\\+\\-]{0,63}@[a-zA-Z0-9\\.\\-]+\\.[a-zA-Z]{2,30}$");
 
