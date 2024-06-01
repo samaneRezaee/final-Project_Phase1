@@ -2,12 +2,10 @@ package org.example.model;
 
 import jakarta.persistence.*;
 import lombok.*;
-import lombok.experimental.SuperBuilder;
 import org.example.base.entity.BaseEntity;
 import org.example.model.enums.Role;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 
 @Entity
 @NoArgsConstructor
