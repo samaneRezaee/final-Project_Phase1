@@ -8,33 +8,27 @@ import lombok.Setter;
 import lombok.experimental.SuperBuilder;
 import org.example.base.entity.BaseEntity;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @Setter
-public class Offer extends BaseEntity<Long> {
+public class Address extends BaseEntity<Long> {
     @Column(nullable = false)
-    private LocalDate localDateOffer;
-
-    @Column(nullable = false)
-    private double proposalPrice;
+    private String city;
 
     @Column(nullable = false)
-    private String estimatedTime;
+    private String avenue;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "technician_id")
-    private Technician technician;
+    @Column(nullable = false)
+    private String allay;
 
-    @ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "request_id")
+    @Column(nullable = false)
+    private String doorplate;
+
+    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @JoinColumn(name = "request_id", referencedColumnName = "id")
     private Request request;
-
-
 
 
 }
