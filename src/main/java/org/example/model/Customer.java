@@ -1,11 +1,10 @@
 package org.example.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
+import org.example.model.enums.Role;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -22,5 +21,9 @@ public class Customer extends Person {
 
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Comment> commentList=new ArrayList<>();
+
+    public Customer(String firstname, String lastname, String email, String username, String password, LocalDate signUpTime, Role role) {
+        super(firstname, lastname, email, username, password, signUpTime, role);
+    }
 
 }

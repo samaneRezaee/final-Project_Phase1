@@ -5,8 +5,10 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.example.model.enums.Role;
 import org.example.model.enums.TechnicianStatus;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,4 +34,9 @@ public class Technician extends Person {
 
     @OneToMany(mappedBy = "technician", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Offer> offers=new ArrayList<>();
+
+    public Technician(String firstname, String lastname, String email, String username
+            , String password, LocalDate signUpTime, Role role) {
+        super(firstname, lastname, email, username, password, signUpTime, role);
+    }
 }

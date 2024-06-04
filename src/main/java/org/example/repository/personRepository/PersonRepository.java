@@ -5,4 +5,8 @@ import org.example.model.Person;
 
 public interface PersonRepository extends BaseRepository<Person, Long> {
 
+    Person findByUsername(String username);
+    boolean isExistEamil(String email);
+
+
 }
