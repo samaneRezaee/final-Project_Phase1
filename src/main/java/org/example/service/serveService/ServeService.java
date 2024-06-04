@@ -4,4 +4,6 @@ import org.example.base.service.BaseService;
 import org.example.model.Serve;
 
 public interface ServeService extends BaseService<Serve, Long> {
+    boolean isExistServe(String title);
+
 }

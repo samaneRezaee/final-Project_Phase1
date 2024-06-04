@@ -3,6 +3,7 @@ package org.example.utility;
 import org.example.exception.NotFoundException;
 import org.example.model.Customer;
 import org.example.model.Person;
+import org.example.model.Serve;
 import org.example.model.Technician;
 import org.example.model.enums.Role;
 import org.example.model.enums.TechnicianStatus;
@@ -188,6 +189,18 @@ public class Menu {
     }
 
     public void registerServe() {
+        System.out.println("Enter new Serve name: ");
+        String title = scanner.nextLine();
+        if(serveService.isExistServe(title)){
+            System.out.println("this title is exist in table, try again.");
+            registerServe();
+        }
+        System.out.println("Write a description about this serve: ");
+        String description=scanner.nextLine();
+        Serve serve = new Serve();
+        serve.setTitle(title);
+        serve.setDescription(description);
+        serveService.saveOrUpdate(serve);
     }
 
     public void registerSubServe() {
@@ -249,8 +262,7 @@ public class Menu {
                 System.out.println("please try again: ");
             }
         }
-        if (personService.isExistEmail(email))
-        {
+        if (personService.isExistEmail(email)) {
             System.out.println(" this email is exists! please try again.");
             getEmail();
         }
