@@ -42,4 +42,12 @@ public class SubServe extends BaseEntity<Long> {
         this.description = description;
         this.serve = serve;
     }
+
+    public SubServe(Long aLong, String title, double price, String description, Serve serve) {
+        super(aLong);
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.serve = serve;
+    }
 }

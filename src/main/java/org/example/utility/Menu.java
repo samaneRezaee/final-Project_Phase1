@@ -73,7 +73,6 @@ public class Menu {
         String lastname = getLastname();
         System.out.println("Please enter your email: ");
         String email = getEmail();
-        String username = email;
         System.out.println("Please enter your password : ");
         String password = getPassword();
         LocalDate singUpTime = LocalDate.now();
@@ -83,7 +82,7 @@ public class Menu {
                 .firstname(firstname)
                 .lastname(lastname)
                 .email(email)
-                .username(username)
+                .username(email)
                 .password(password)
                 .signUpTime(singUpTime)
                 .role(memberRole)
@@ -163,7 +162,7 @@ public class Menu {
         System.out.println("2-REGISTER NEW SUB_SERVE");
         System.out.println("3-EDIT SERVE");
         System.out.println("4-EDIT SUB_SERVE");
-        System.out.println("5-VIEW TECHNICIAN LIST");
+        System.out.println("5-TECHNICIAN LIST");
         System.out.println("6-BACK");
         System.out.println(" choose a number: ");
         try {
@@ -181,7 +180,7 @@ public class Menu {
             case 6 -> mainMenu();
             default -> {
                 System.out.println("input number is wrong!!!!!!!!");
-                mainMenu();
+                adminMenu();
             }
         }
     }
@@ -196,9 +195,10 @@ public class Menu {
         } else {
             System.out.println("Write a description about this serve: ");
             String description = getInput();
-            Serve serve = new Serve(title,description);
+            Serve serve = new Serve(title, description);
             serveService.saveOrUpdate(serve);
-            mainMenu();
+            System.out.println("new serve is saved.");
+            adminMenu();
         }
     }
 
@@ -219,6 +219,7 @@ public class Menu {
             while (isNotExistServe) {
                 System.out.println("enter Serve id for this sub serve: ");
                 serveService.loadAllServe();
+                System.out.println("id: ");
                 Long idServe = scanner.nextLong();
                 scanner.nextLine();
                 serve = serveService.findById(idServe);
@@ -231,38 +232,119 @@ public class Menu {
             }
             SubServe subServe = new SubServe(subTitle, price, description, serve);
             subServeService.saveOrUpdate(subServe);
-            mainMenu();
+            System.out.println(" the sub service is saved.");
+            adminMenu();
         }
     }
 
     public void editServe() {
         System.out.println("to edit a Service choose it's id: ");
         serveService.loadAllServe();
-        Long idServe = scanner.nextLong();
+        long idServe = 0L;
+        boolean validInput = false;
+        while (!validInput) {
+            try {
+                idServe = scanner.nextLong();
+                validInput = true; // Input is valid, break the loop
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric id.");
+                scanner.nextLine(); // Clear the invalid input
+            }
+        }
         scanner.nextLine();
-        Serve serve=serveService.findById(idServe);
+        try {
+            serveService.findById(idServe);
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            editServe();
+        }
         System.out.println("enter new title: ");
-        String newTitle = scanner.nextLine();
-        if(Objects.equals(newTitle, ""))
-            newTitle=serve.getTitle();
-        scanner.nextLine();
+        String newTitle = getInput();
         System.out.println(" enter new description: ");
-        String newDescription = scanner.nextLine();
-        if(Objects.equals(newDescription, ""))
-            newDescription=serve.getDescription();
-        Serve newServe=new Serve(idServe,newTitle,newDescription);
+        String newDescription = getInput();
+        Serve newServe = new Serve(idServe, newTitle, newDescription);
         serveService.saveOrUpdate(newServe);
         System.out.println("change is saved.");
         adminMenu();
-
     }
 
     public void editSubServe() {
+        System.out.println("to edit a SubService choose it's id: ");
+        subServeService.loadAllSubServe();
+        long idSubServe = 0L;
+        while (true) {
+            try {
+                idSubServe = scanner.nextLong();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric id.");
+                scanner.nextLine();
+            }
+        }
+        scanner.nextLine();
+        try {
+            subServeService.findById(idSubServe);
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            editSubServe();
+        }
+        System.out.println("enter new title: ");
+        String newTitle = getInput();
+        System.out.println("enter new price: ");
+        double newPrice = 0;
+        while (true) {
+            try {
+                newPrice = scanner.nextDouble();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric price.");
+                scanner.nextLine();
+            }
+        }
+        scanner.nextLine();
+        System.out.println(" enter new description: ");
+        String newDescription = getInput();
+        System.out.println("choose a new Serve for this sub service: ");
+        serveService.loadAllServe();
+        Long newServeId = scanner.nextLong();
+        scanner.nextLine();
+        Serve serve = serveService.findById(newServeId);
+        SubServe newSubServe = new SubServe(idSubServe, newTitle, newPrice, newDescription, serve);
+        subServeService.saveOrUpdate(newSubServe);
+        System.out.println("change is saved.");
+        adminMenu();
     }
 
     public void changeTechnicianStatus() {
+        int choice = 0;
+        System.out.println("ADMIN : " + personSignIn.getUsername());
+        System.out.println("1-REGISTER NEW TECHNICIAN: ");
+        System.out.println("2-ADD TECHNICIAN TO SUB SERVICE: ");
+        System.out.println("3-DELETE TECHNICIAN FROM SUB SERVICE: ");
+        System.out.println("4-BACK");
+        while (true) {
+            try {
+                choice = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric input.");
+            }
+        }
+        scanner.nextLine();
+        switch (choice) {
+            case 1 -> registerNewTechnician();
+            case 2 -> addTechnicianToSubService();
+            case 3 -> deleteTechnicianFromSubService();
+            case 4 -> adminMenu();
+            default -> {
+                System.out.println("input number is wrong!!!!!!!!");
+                changeTechnicianStatus();
+            }
+        }
     }
-
+    public void registerNewTechnician(){}
+    public void addTechnicianToSubService(){}
+    public void deleteTechnicianFromSubService(){}
     public void customerMenu() {
         System.out.println(" hello customer");
     }
@@ -316,6 +398,7 @@ public class Menu {
         }
         return email;
     }
+
     public String getInput() {
         String input;
         while (true) {
@@ -329,6 +412,7 @@ public class Menu {
         }
         return input;
     }
+
 
     public String getPassword() {
         String password;
