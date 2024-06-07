@@ -20,6 +20,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.InputMismatchException;
+import java.util.Objects;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
@@ -188,16 +189,14 @@ public class Menu {
     public void registerServe() {
         serveService.loadAllServe();
         System.out.println("Enter new Serve name: ");
-        String title = scanner.nextLine();
+        String title = getInput();
         if (serveService.isExistServe(title)) {
             System.out.println("this title is exist in table, try again.");
             registerServe();
         } else {
             System.out.println("Write a description about this serve: ");
-            String description = scanner.nextLine();
-            Serve serve = new Serve();
-            serve.setTitle(title);
-            serve.setDescription(description);
+            String description = getInput();
+            Serve serve = new Serve(title,description);
             serveService.saveOrUpdate(serve);
             mainMenu();
         }
@@ -206,7 +205,7 @@ public class Menu {
     public void registerSubServe() {
         Serve serve = new Serve();
         System.out.println("please enter sub service title: ");
-        String subTitle = scanner.nextLine();
+        String subTitle = getInput();
         if (subServeService.isExistSubServe(subTitle)) {
             System.out.println("this title is exists, please try again.");
             registerSubServe();
@@ -215,7 +214,7 @@ public class Menu {
             double price = scanner.nextDouble();
             scanner.nextLine();
             System.out.println("Write a description about this serve: ");
-            String description = scanner.nextLine();
+            String description = getInput();
             boolean isNotExistServe = true;
             while (isNotExistServe) {
                 System.out.println("enter Serve id for this sub serve: ");
@@ -239,8 +238,23 @@ public class Menu {
     public void editServe() {
         System.out.println("to edit a Service choose it's id: ");
         serveService.loadAllServe();
-        Long idServe=scanner.nextLong();
+        Long idServe = scanner.nextLong();
         scanner.nextLine();
+        Serve serve=serveService.findById(idServe);
+        System.out.println("enter new title: ");
+        String newTitle = scanner.nextLine();
+        if(Objects.equals(newTitle, ""))
+            newTitle=serve.getTitle();
+        scanner.nextLine();
+        System.out.println(" enter new description: ");
+        String newDescription = scanner.nextLine();
+        if(Objects.equals(newDescription, ""))
+            newDescription=serve.getDescription();
+        Serve newServe=new Serve(idServe,newTitle,newDescription);
+        serveService.saveOrUpdate(newServe);
+        System.out.println("change is saved.");
+        adminMenu();
+
     }
 
     public void editSubServe() {
@@ -301,6 +315,19 @@ public class Menu {
             getEmail();
         }
         return email;
+    }
+    public String getInput() {
+        String input;
+        while (true) {
+            input = scanner.nextLine();
+            if (Validation.isValidStringInsert(input))
+                break;
+            else {
+                System.out.println("input is not valid!!!!!!!!");
+                System.out.println("please try again: ");
+            }
+        }
+        return input;
     }
 
     public String getPassword() {
