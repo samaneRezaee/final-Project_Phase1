@@ -21,6 +21,9 @@ public class SubServe extends BaseEntity<Long> {
     private String title;
 
     @Column(nullable = false)
+    private double price;
+
+    @Column(nullable = false)
     private String description;
 
     @OneToMany(mappedBy = "subServe", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
@@ -33,4 +36,10 @@ public class SubServe extends BaseEntity<Long> {
     @OneToMany(mappedBy = "subServe", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Request> requests=new ArrayList<>();
 
+    public SubServe(String title, double price, String description, Serve serve) {
+        this.title = title;
+        this.price = price;
+        this.description = description;
+        this.serve = serve;
+    }
 }

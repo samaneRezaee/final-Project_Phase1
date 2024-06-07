@@ -1,10 +1,7 @@
 package org.example.utility;
 
 import org.example.exception.NotFoundException;
-import org.example.model.Customer;
-import org.example.model.Person;
-import org.example.model.Serve;
-import org.example.model.Technician;
+import org.example.model.*;
 import org.example.model.enums.Role;
 import org.example.model.enums.TechnicianStatus;
 import org.example.service.commentService.CommentService;
@@ -189,24 +186,61 @@ public class Menu {
     }
 
     public void registerServe() {
+        serveService.loadAllServe();
         System.out.println("Enter new Serve name: ");
         String title = scanner.nextLine();
-        if(serveService.isExistServe(title)){
+        if (serveService.isExistServe(title)) {
             System.out.println("this title is exist in table, try again.");
             registerServe();
+        } else {
+            System.out.println("Write a description about this serve: ");
+            String description = scanner.nextLine();
+            Serve serve = new Serve();
+            serve.setTitle(title);
+            serve.setDescription(description);
+            serveService.saveOrUpdate(serve);
+            mainMenu();
         }
-        System.out.println("Write a description about this serve: ");
-        String description=scanner.nextLine();
-        Serve serve = new Serve();
-        serve.setTitle(title);
-        serve.setDescription(description);
-        serveService.saveOrUpdate(serve);
     }
 
     public void registerSubServe() {
+        Serve serve = new Serve();
+        System.out.println("please enter sub service title: ");
+        String subTitle = scanner.nextLine();
+        if (subServeService.isExistSubServe(subTitle)) {
+            System.out.println("this title is exists, please try again.");
+            registerSubServe();
+        } else {
+            System.out.println("enter a price for this sub service: ");
+            double price = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.println("Write a description about this serve: ");
+            String description = scanner.nextLine();
+            boolean isNotExistServe = true;
+            while (isNotExistServe) {
+                System.out.println("enter Serve id for this sub serve: ");
+                serveService.loadAllServe();
+                Long idServe = scanner.nextLong();
+                scanner.nextLine();
+                serve = serveService.findById(idServe);
+                if (serve != null) {
+                    isNotExistServe = false;
+                } else {
+                    System.out.println("this Service is not exist, you should first create Service");
+                    adminMenu();
+                }
+            }
+            SubServe subServe = new SubServe(subTitle, price, description, serve);
+            subServeService.saveOrUpdate(subServe);
+            mainMenu();
+        }
     }
 
     public void editServe() {
+        System.out.println("to edit a Service choose it's id: ");
+        serveService.loadAllServe();
+        Long idServe=scanner.nextLong();
+        scanner.nextLine();
     }
 
     public void editSubServe() {

@@ -7,6 +7,8 @@ import org.hibernate.Session;
 import org.hibernate.SessionFactory;
 import org.hibernate.query.Query;
 
+import java.util.List;
+
 public class ServeRepositoryImpl extends BaseRepositoryImpl<Serve, Long> implements ServeRepository {
     public ServeRepositoryImpl(SessionFactory sessionFactory) {
         super(sessionFactory);
@@ -24,5 +26,15 @@ public class ServeRepositoryImpl extends BaseRepositoryImpl<Serve, Long> impleme
         Query<Serve> serveQuery=session.createQuery(hqlIsExistServe, Serve.class);
         serveQuery.setParameter("title", title);
         return serveQuery.uniqueResult() != null;
+    }
+
+    @Override
+    public List<Serve> loadAllServe() {
+        List<Serve> serveList=null;
+        Session session=SessionFactorySingleton.getInstance().openSession();
+        String hqlLoadAll="FROM Serve";
+        Query<Serve> serveQuery=session.createQuery(hqlLoadAll, Serve.class);
+        serveList=serveQuery.getResultList();
+        return serveList;
     }
 }
