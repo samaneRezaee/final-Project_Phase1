@@ -20,7 +20,6 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
 import java.util.InputMismatchException;
-import java.util.Objects;
 import java.util.Scanner;
 
 import static java.lang.System.exit;
@@ -140,7 +139,7 @@ public class Menu {
     }
 
     public void signIn() {
-        System.out.println("To signIn please enter your username: ");
+        System.out.println("To signIn please enter your username (email address): ");
         String username = scanner.nextLine();
         System.out.println("enter your password: ");
         String password = scanner.nextLine();
@@ -248,10 +247,10 @@ public class Menu {
         while (!validInput) {
             try {
                 idServe = scanner.nextLong();
-                validInput = true; // Input is valid, break the loop
+                validInput = true;
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a numeric id.");
-                scanner.nextLine(); // Clear the invalid input
+                scanner.nextLine();
             }
         }
         scanner.nextLine();
@@ -490,7 +489,7 @@ public class Menu {
         System.out.println("role: " + personSignIn.getRole() + ", firstname: " + personSignIn.getFirstname() + ", lastname: "
                 + personSignIn.getLastname() + ", email: " + personSignIn.getEmail());
         System.out.println("choose a number to edit: ");
-        System.out.println("1-firstname \n 2-lastname \n 3-email \n 4-back");
+        System.out.println("1-firstname \n2-lastname \n3-email \n4-back");
         int inputNumber = 0;
         while (true) {
             try {
@@ -534,8 +533,10 @@ public class Menu {
         System.out.println("enter new email: ");
         String newEmail = getEmail();
         personSignIn.setEmail(newEmail);
+        personSignIn.setUsername(newEmail);
         personService.saveOrUpdate(personSignIn);
-        editProfile();
+        System.out.println("please sign in again");
+        mainMenu();
     }
 
     private void changePassword() {
