@@ -3,6 +3,8 @@ package org.example.model;
 import jakarta.persistence.*;
 import lombok.*;
 import org.example.model.enums.Role;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -14,6 +16,7 @@ import java.util.List;
 @Getter
 @Setter
 @PrimaryKeyJoinColumn(name = "person_id")
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Customer extends Person {
 
     @OneToMany(mappedBy = "customer",cascade = {CascadeType.PERSIST, CascadeType.MERGE})

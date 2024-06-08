@@ -105,6 +105,8 @@ public class Menu {
 
     public void signUpTechnician(Person person) {
         TechnicianStatus status = TechnicianStatus.NEW;
+        System.out.println("please write about your skills: ");
+        String skills = scanner.nextLine();
         byte[] bytes = new byte[0];
         boolean flag = true;
         while (flag) {
@@ -123,6 +125,7 @@ public class Menu {
                 , person.getUsername(), person.getPassword(), person.getSignUpTime(), person.getRole());
         technician.setStatus(status);
         technician.setPicture(bytes);
+        technician.setSkills(skills);
         technicianService.saveOrUpdate(technician);
 
         String fileName = technician.getUsername();
@@ -321,7 +324,8 @@ public class Menu {
         System.out.println("1-REGISTER NEW TECHNICIAN: ");
         System.out.println("2-ADD TECHNICIAN TO SUB SERVICE: ");
         System.out.println("3-DELETE TECHNICIAN FROM SUB SERVICE: ");
-        System.out.println("4-BACK");
+        System.out.println("4-DELETE TECHNICIAN: ");
+        System.out.println("5-BACK");
         while (true) {
             try {
                 choice = scanner.nextInt();
@@ -335,25 +339,127 @@ public class Menu {
             case 1 -> registerNewTechnician();
             case 2 -> addTechnicianToSubService();
             case 3 -> deleteTechnicianFromSubService();
-            case 4 -> adminMenu();
+            case 5 -> adminMenu();
             default -> {
                 System.out.println("input number is wrong!!!!!!!!");
                 changeTechnicianStatus();
             }
         }
     }
-    public void registerNewTechnician(){}
-    public void addTechnicianToSubService(){}
-    public void deleteTechnicianFromSubService(){}
+
+    public void registerNewTechnician() {
+        technicianService.showTechnicianWithStatus(TechnicianStatus.NEW);
+        System.out.println("Enter technician id: ");
+        long id = 0;
+        while (true) {
+            try {
+                id = scanner.nextLong();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric id.");
+                scanner.nextLine();
+            }
+        }
+        scanner.nextLine();
+        try {
+            Technician technician = technicianService.findById(id);
+            technician.setStatus(TechnicianStatus.CONFIRMED);
+            technicianService.saveOrUpdate(technician);
+            System.out.println("Technician status is changed.");
+            changeTechnicianStatus();
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            registerNewTechnician();
+        }
+    }
+
+    public void addTechnicianToSubService() {
+        subServeService.loadAllSubServe();
+        System.out.println("enter sub service id: ");
+        long subServeId= scanner.nextLong();
+        scanner.nextLine();
+        SubServe subServe=subServeService.findById(subServeId);
+        System.out.println(" enter technician id to add the sub service: ");
+        long id = 0;
+        while (true) {
+            try {
+                id = scanner.nextLong();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric id.");
+                scanner.nextLine();
+            }
+        }
+        scanner.nextLine();
+        try {
+            Technician technician = technicianService.findById(id);
+            technician.setSubServe(subServe);
+            technicianService.saveOrUpdate(technician);
+            System.out.println("sub service is add to technician information.");
+            changeTechnicianStatus();
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            addTechnicianToSubService();
+        }
+    }
+
+    public void deleteTechnicianFromSubService() {
+        technicianService.showTechnicianWithStatus(TechnicianStatus.CONFIRMED);
+        System.out.println(" enter technician id to delete from sub service: ");
+        long id = 0;
+        while (true) {
+            try {
+                id = scanner.nextLong();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric id.");
+                scanner.nextLine();
+            }
+        }
+        scanner.nextLine();
+        try {
+            Technician technician = technicianService.findById(id);
+            technician.setSubServe(null);
+            technicianService.saveOrUpdate(technician);
+            System.out.println("sub service is deleted from technician.");
+            changeTechnicianStatus();
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            addTechnicianToSubService();
+        }
+    }
+
     public void customerMenu() {
-        System.out.println(" hello customer");
+        int choice = 0;
+        System.out.println("CUSTOMER : " + personSignIn.getUsername());
+        System.out.println("1-REGISTER AN ORDER: ");
+        System.out.println("2-EDIT PROFILE: ");
+        System.out.println("3-BACK");
+        while (true) {
+            try {
+                choice = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric input.");
+            }
+        }
+        scanner.nextLine();
+        switch (choice) {
+            case 1 -> registerNewTechnician();
+            case 2 -> addTechnicianToSubService();
+            case 3 -> mainMenu();
+            default -> {
+                System.out.println("input number is wrong!!!!!!!!");
+                customerMenu();
+            }
+        }
     }
 
     public void technicianMenu() {
     }
 
 
-    public String getLastname() {
+    private String getLastname() {
         String lastname;
         while (true) {
             lastname = scanner.nextLine();
@@ -367,7 +473,7 @@ public class Menu {
         return lastname;
     }
 
-    public String getFirstname() {
+    private String getFirstname() {
         String firstname;
         while (true) {
             firstname = scanner.nextLine();
@@ -381,7 +487,7 @@ public class Menu {
         return firstname;
     }
 
-    public String getEmail() {
+    private String getEmail() {
         String email;
         while (true) {
             email = scanner.nextLine();
@@ -399,7 +505,7 @@ public class Menu {
         return email;
     }
 
-    public String getInput() {
+    private String getInput() {
         String input;
         while (true) {
             input = scanner.nextLine();
@@ -414,7 +520,7 @@ public class Menu {
     }
 
 
-    public String getPassword() {
+    private String getPassword() {
         String password;
         while (true) {
             password = scanner.nextLine();
@@ -428,7 +534,7 @@ public class Menu {
         return password;
     }
 
-    public Role chooseRole() {
+    private Role chooseRole() {
         Role role = null;
         int choice = 0;
         System.out.println("1- CUSTOMER");

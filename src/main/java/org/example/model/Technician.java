@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.example.model.enums.Role;
 import org.example.model.enums.TechnicianStatus;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -17,9 +19,14 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
+@OnDelete(action = OnDeleteAction.CASCADE)
 public class Technician extends Person {
     @Column(nullable = false)
+    @Enumerated(EnumType.STRING)
     private TechnicianStatus status;
+
+    @Column(nullable = false)
+    private String skills;
 
     @Column(nullable = false)
     @Lob
