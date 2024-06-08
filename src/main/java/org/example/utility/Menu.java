@@ -376,9 +376,9 @@ public class Menu {
     public void addTechnicianToSubService() {
         subServeService.loadAllSubServe();
         System.out.println("enter sub service id: ");
-        long subServeId= scanner.nextLong();
+        long subServeId = scanner.nextLong();
         scanner.nextLine();
-        SubServe subServe=subServeService.findById(subServeId);
+        SubServe subServe = subServeService.findById(subServeId);
         System.out.println(" enter technician id to add the sub service: ");
         long id = 0;
         while (true) {
@@ -425,7 +425,7 @@ public class Menu {
             changeTechnicianStatus();
         } catch (NotFoundException e) {
             System.out.println("id is not found!");
-            addTechnicianToSubService();
+            deleteTechnicianFromSubService();
         }
     }
 
@@ -434,6 +434,37 @@ public class Menu {
         System.out.println("CUSTOMER : " + personSignIn.getUsername());
         System.out.println("1-REGISTER AN ORDER: ");
         System.out.println("2-EDIT PROFILE: ");
+        System.out.println("3-CHANGE PASSWORD: ");
+        System.out.println("4-BACK");
+        while (true) {
+            try {
+                choice = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric input.");
+            }
+        }
+        scanner.nextLine();
+        switch (choice) {
+            case 1 -> registerRequest();
+            case 2 -> editProfile();
+            case 3 -> changePassword();
+            case 4 -> mainMenu();
+            default -> {
+                System.out.println("input number is wrong!!!!!!!!");
+                customerMenu();
+            }
+        }
+    }
+
+    public void registerRequest() {
+    }
+
+    public void technicianMenu() {
+        int choice = 0;
+        System.out.println("TECHNICIAN : " + personSignIn.getUsername());
+        System.out.println("1-EDIT PROFILE: ");
+        System.out.println("2-CHANGE PASSWORD: ");
         System.out.println("3-BACK");
         while (true) {
             try {
@@ -445,17 +476,83 @@ public class Menu {
         }
         scanner.nextLine();
         switch (choice) {
-            case 1 -> registerNewTechnician();
-            case 2 -> addTechnicianToSubService();
+            case 1 -> editProfile();
+            case 2 -> changePassword();
             case 3 -> mainMenu();
             default -> {
                 System.out.println("input number is wrong!!!!!!!!");
-                customerMenu();
+                technicianMenu();
             }
         }
     }
 
-    public void technicianMenu() {
+    public void editProfile() {
+        System.out.println("role: " + personSignIn.getRole() + ", firstname: " + personSignIn.getFirstname() + ", lastname: "
+                + personSignIn.getLastname() + ", email: " + personSignIn.getEmail());
+        System.out.println("choose a number to edit: ");
+        System.out.println("1-firstname \n 2-lastname \n 3-email \n 4-back");
+        int inputNumber = 0;
+        while (true) {
+            try {
+                inputNumber = scanner.nextInt();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric input.");
+            }
+        }
+        scanner.nextLine();
+        switch (inputNumber) {
+            case 1 -> editFirstname();
+            case 2 -> editLastname();
+            case 3 -> editEmail();
+            case 4 -> mainMenu();
+            default -> {
+                System.out.println("input number is wrong!!!!!!!!");
+                editProfile();
+            }
+        }
+
+    }
+
+    private void editFirstname() {
+        System.out.println("enter new firstname: ");
+        String newFirstname = getFirstname();
+        personSignIn.setFirstname(newFirstname);
+        personService.saveOrUpdate(personSignIn);
+        editProfile();
+    }
+
+    private void editLastname() {
+        System.out.println("enter new lastname: ");
+        String newLastname = getLastname();
+        personSignIn.setLastname(newLastname);
+        personService.saveOrUpdate(personSignIn);
+        editProfile();
+    }
+
+    private void editEmail() {
+        System.out.println("enter new email: ");
+        String newEmail = getEmail();
+        personSignIn.setEmail(newEmail);
+        personService.saveOrUpdate(personSignIn);
+        editProfile();
+    }
+
+    private void changePassword() {
+        System.out.println("role: " + personSignIn.getRole() + ", username: " + personSignIn.getUsername());
+        System.out.println("enter new password: ");
+        String newPassword1 = getPassword();
+        System.out.println("confirm your new password: ");
+        String newPassword2 = getPassword();
+        if (newPassword2.equals(newPassword1)) {
+            personSignIn.setPassword(newPassword2);
+            personService.saveOrUpdate(personSignIn);
+            System.out.println("password is changed.");
+            mainMenu();
+        } else {
+            System.out.println("try again");
+            changePassword();
+        }
     }
 
 
