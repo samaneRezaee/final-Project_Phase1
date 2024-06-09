@@ -25,7 +25,7 @@ public class Address extends BaseEntity<Long> {
     @Column(nullable = false)
     private String doorplate;
 
-    @OneToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToOne(cascade =  CascadeType.MERGE)
     @JoinColumn(name = "request_id", referencedColumnName = "id")
     private Request request;
 

@@ -5,6 +5,7 @@ import org.example.model.*;
 import org.example.model.enums.RequestStatus;
 import org.example.model.enums.Role;
 import org.example.model.enums.TechnicianStatus;
+import org.example.service.addressService.AddressService;
 import org.example.service.commentService.CommentService;
 import org.example.service.creditService.CreditService;
 import org.example.service.customerService.CustomerService;
@@ -20,8 +21,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -38,7 +37,7 @@ public class Menu {
     private final ServeService serveService = ApplicationContext.getServeService();
     private final SubServeService subServeService = ApplicationContext.getSubServeService();
     private final TechnicianService technicianService = ApplicationContext.getTechnicianService();
-
+    private final AddressService addressService = ApplicationContext.getAddressService();
     Person personSignIn = new Person();
 
 
@@ -480,7 +479,7 @@ public class Menu {
     }
 
     private void registerRequest() {
-        Customer customer=customerService.findById(personSignIn.getId());
+        Customer customer = customerService.findById(personSignIn.getId());
         showSubServe();
         System.out.println("do you want to register an order? (y/n)");
         String input = scanner.nextLine();
@@ -488,23 +487,35 @@ public class Menu {
             System.out.println("enter sub serve id: ");
             long id = scanner.nextLong();
             scanner.nextLine();
-            SubServe subServe=subServeService.findById(id);
+            SubServe subServe = subServeService.findById(id);
             System.out.println("insert price: ");
             double price = scanner.nextDouble();
             scanner.nextLine();
             System.out.println("write a description about your order: ");
             String description = scanner.nextLine();
             System.out.println("insert a date for your order: (yyyy/M/d)");
-            LocalDate date=Validation.isValidDate();
-            RequestStatus status=RequestStatus.WAIT_FOR_PROPOSAL;
-            Request request=new Request(price,description,date,status,customer,subServe);
-//            request.setCustomer(customer);
-//            request.setSubServe(subServe);
-            requestService.saveOrUpdate(request);
+            LocalDate date = Validation.isValidDate();
+            RequestStatus status = RequestStatus.WAIT_FOR_PROPOSAL;
+            Request request = new Request(price, description, date, status, customer, subServe);
+            Request requestWithId = requestService.saveOrUpdate(request);
+            addressOfRequest(requestWithId);
             System.out.println("request is saved.");
             customerMenu();
         } else
             customerMenu();
+    }
+
+    private void addressOfRequest(Request request) {
+        System.out.println("enter city name: ");
+        String city = getInput();
+        System.out.println("enter avenue name: ");
+        String avenue = getInput();
+        System.out.println("enter allay: ");
+        String allay = getInput();
+        System.out.println("enter doorplate: ");
+        String doorplate = scanner.nextLine();
+        Address address = new Address(city, avenue, allay, doorplate, request);
+        addressService.saveOrUpdate(address);
     }
 
     private void showSubServe() {
