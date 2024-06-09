@@ -1,5 +1,9 @@
 package org.example.utility;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -37,6 +41,22 @@ public class Validation {
     public static boolean isValidStringInsert(String inputString){
         Matcher matcher=STRING_INSERT_PATTERN.matcher(inputString);
         return matcher.find();
+    }
+    public static LocalDate isValidDate(){
+        Scanner scanner = new Scanner(System.in);
+        String dateInput;
+        LocalDate dateOfOrder;
+        DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy/M/d");
+        while (true){
+            dateInput=scanner.nextLine();
+            try {
+                dateOfOrder = LocalDate.parse(dateInput, dateFormat);
+                if(dateOfOrder.isAfter(LocalDate.now()))
+                    return dateOfOrder;
+            } catch (DateTimeParseException e) {
+                System.out.println("The date you have entered is not valid. Please try again.");
+            }
+        }
     }
 
 }

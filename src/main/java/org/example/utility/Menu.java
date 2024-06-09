@@ -2,6 +2,7 @@ package org.example.utility;
 
 import org.example.exception.NotFoundException;
 import org.example.model.*;
+import org.example.model.enums.RequestStatus;
 import org.example.model.enums.Role;
 import org.example.model.enums.TechnicianStatus;
 import org.example.service.commentService.CommentService;
@@ -19,6 +20,8 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
@@ -110,15 +113,16 @@ public class Menu {
         boolean flag = true;
         while (flag) {
             System.out.println(" Please add your picture: (insert picture file path)");
+            System.out.println("picture with size less than: 300K and jpg format.");
             String picPath = scanner.nextLine();
             Path path = Paths.get(picPath);
             try {
                 bytes = Files.readAllBytes(path);
+                if (bytes.length <= 300000)
+                    flag = false;
             } catch (IOException e) {
-                throw new RuntimeException(e);
+                System.out.println("Invalid input.");
             }
-            if (bytes.length <= 300000)
-                flag = false;
         }
         Technician technician = new Technician(person.getFirstname(), person.getLastname(), person.getEmail()
                 , person.getUsername(), person.getPassword(), person.getSignUpTime(), person.getRole());
@@ -133,7 +137,10 @@ public class Menu {
         try {
             Files.write(pathD, technician.getPicture());
         } catch (IOException e) {
-            throw new RuntimeException(e);
+//            throw new RuntimeException(e);
+            System.out.println("Invalid input.");
+
+
         }
         signIn();
     }
@@ -320,10 +327,10 @@ public class Menu {
     public void changeTechnicianStatus() {
         int choice = 0;
         System.out.println("ADMIN : " + personSignIn.getUsername());
-        System.out.println("1-REGISTER NEW TECHNICIAN: ");
-        System.out.println("2-ADD TECHNICIAN TO SUB SERVICE: ");
-        System.out.println("3-DELETE TECHNICIAN FROM SUB SERVICE: ");
-        System.out.println("4-DELETE TECHNICIAN: ");
+        System.out.println("1-REGISTER NEW TECHNICIAN ");
+        System.out.println("2-ADD TECHNICIAN TO SUB SERVICE ");
+        System.out.println("3-DELETE TECHNICIAN FROM SUB SERVICE ");
+        System.out.println("4-DELETE TECHNICIAN ");
         System.out.println("5-BACK");
         while (true) {
             try {
@@ -338,11 +345,27 @@ public class Menu {
             case 1 -> registerNewTechnician();
             case 2 -> addTechnicianToSubService();
             case 3 -> deleteTechnicianFromSubService();
+            case 4 -> deleteTechnician();
             case 5 -> adminMenu();
             default -> {
                 System.out.println("input number is wrong!!!!!!!!");
                 changeTechnicianStatus();
             }
+        }
+    }
+
+    private void deleteTechnician() {
+        System.out.println("Please insert technician id to delete: ");
+        long id = scanner.nextLong();
+        scanner.nextLine();
+        try {
+            Technician technician = technicianService.findById(id);
+            technicianService.delete(technician);
+            System.out.println("technician is deleted.");
+            changeTechnicianStatus();
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            changeTechnicianStatus();
         }
     }
 
@@ -394,7 +417,7 @@ public class Menu {
             Technician technician = technicianService.findById(id);
             technician.setSubServe(subServe);
             technicianService.saveOrUpdate(technician);
-            System.out.println("sub service is add to technician information.");
+            System.out.println("sub service is added to technician information.");
             changeTechnicianStatus();
         } catch (NotFoundException e) {
             System.out.println("id is not found!");
@@ -456,10 +479,58 @@ public class Menu {
         }
     }
 
-    public void registerRequest() {
+    private void registerRequest() {
+        Customer customer=customerService.findById(personSignIn.getId());
+        showSubServe();
+        System.out.println("do you want to register an order? (y/n)");
+        String input = scanner.nextLine();
+        if (input.equals("y")) {
+            System.out.println("enter sub serve id: ");
+            long id = scanner.nextLong();
+            scanner.nextLine();
+            SubServe subServe=subServeService.findById(id);
+            System.out.println("insert price: ");
+            double price = scanner.nextDouble();
+            scanner.nextLine();
+            System.out.println("write a description about your order: ");
+            String description = scanner.nextLine();
+            System.out.println("insert a date for your order: (yyyy/M/d)");
+            LocalDate date=Validation.isValidDate();
+            RequestStatus status=RequestStatus.WAIT_FOR_PROPOSAL;
+            Request request=new Request(price,description,date,status,customer,subServe);
+//            request.setCustomer(customer);
+//            request.setSubServe(subServe);
+            requestService.saveOrUpdate(request);
+            System.out.println("request is saved.");
+            customerMenu();
+        } else
+            customerMenu();
     }
 
-    public void technicianMenu() {
+    private void showSubServe() {
+        System.out.println("to see each sub service of this services insert it's id: ");
+        serveService.loadAllServe();
+        long idServe = 0;
+        while (true) {
+            try {
+                idServe = scanner.nextLong();
+                break;
+            } catch (InputMismatchException e) {
+                System.out.println("Invalid input. Please enter a numeric id.");
+                scanner.nextLine();
+            }
+        }
+        scanner.nextLine();
+        try {
+            Serve serve = serveService.findById(idServe);
+            subServeService.findByServeId(serve.getId());
+        } catch (NotFoundException e) {
+            System.out.println("id is not found!");
+            registerRequest();
+        }
+    }
+
+    private void technicianMenu() {
         int choice = 0;
         System.out.println("TECHNICIAN : " + personSignIn.getUsername());
         System.out.println("1-EDIT PROFILE: ");
@@ -471,6 +542,7 @@ public class Menu {
                 break;
             } catch (InputMismatchException e) {
                 System.out.println("Invalid input. Please enter a numeric input.");
+                scanner.nextLine();
             }
         }
         scanner.nextLine();
@@ -485,7 +557,7 @@ public class Menu {
         }
     }
 
-    public void editProfile() {
+    private void editProfile() {
         System.out.println("role: " + personSignIn.getRole() + ", firstname: " + personSignIn.getFirstname() + ", lastname: "
                 + personSignIn.getLastname() + ", email: " + personSignIn.getEmail());
         System.out.println("choose a number to edit: ");

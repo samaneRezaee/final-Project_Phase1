@@ -37,7 +37,4 @@ public class Person extends BaseEntity<Long> {
     @Column(nullable = false)
     @Enumerated(EnumType.STRING)
     private Role role;
-
-
-
 }

@@ -33,6 +33,4 @@ public class Offer extends BaseEntity<Long> {
     private Request request;
 
 
-
-
 }

@@ -36,11 +36,21 @@ public class Request extends BaseEntity<Long> {
     @JoinColumn(name = "customer_id")
     private Customer customer;
 
-    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @ManyToOne(cascade =  CascadeType.MERGE)
     @JoinColumn(name = "subserve_id")
     private SubServe subServe;
 
     @OneToMany(mappedBy = "request", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Offer> offerList = new ArrayList<>();
 
+    public Request(double proposalCustomerPrice, String descriptionOfRequest, LocalDate dateToDoRequest,
+                   RequestStatus requestStatus, Customer customer, SubServe subServe) {
+
+        this.proposalCustomerPrice = proposalCustomerPrice;
+        this.descriptionOfRequest = descriptionOfRequest;
+        this.dateToDoRequest = dateToDoRequest;
+        this.requestStatus = requestStatus;
+        this.customer = customer;
+        this.subServe = subServe;
+    }
 }

@@ -27,14 +27,14 @@ public class SubServe extends BaseEntity<Long> {
     private String description;
 
     @OneToMany(mappedBy = "subServe", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Technician> technicians=new ArrayList<>();
+    private List<Technician> technicians = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.MERGE)
     @JoinColumn(name = "serve_id")
     private Serve serve;
 
     @OneToMany(mappedBy = "subServe", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Request> requests=new ArrayList<>();
+    private List<Request> requests = new ArrayList<>();
 
     public SubServe(String title, double price, String description, Serve serve) {
         this.title = title;

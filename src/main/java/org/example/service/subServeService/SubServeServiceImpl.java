@@ -29,7 +29,19 @@ public class SubServeServiceImpl extends BaseServiceImpl<SubServe, Long, SubServ
         try {
             List<SubServe> subServeList = repository.loadAllSubServe();
             for (SubServe s : subServeList) {
-                System.out.println("id: " + s.getId() + "   " + "title: " + s.getTitle() + "   " + "description: " + s.getDescription());
+                System.out.println("id: " + s.getId() + "   " + "title: " + s.getTitle()+ "   " + "price: " + s.getPrice() + "   " + "description: " + s.getDescription());
+            }
+        } catch (HibernateException e) {
+            System.out.println("ServeRepoImpl" + e.getMessage());
+        }
+    }
+
+    @Override
+    public void findByServeId(Long id) {
+        try {
+            List<SubServe> subServeList = repository.findByServeId(id);
+            for (SubServe s : subServeList) {
+                System.out.println("id: " + s.getId() + "   " + "title: " + s.getTitle() + "   " + "price: " + s.getPrice() + "   " + "description: " + s.getDescription());
             }
         } catch (HibernateException e) {
             System.out.println("ServeRepoImpl" + e.getMessage());

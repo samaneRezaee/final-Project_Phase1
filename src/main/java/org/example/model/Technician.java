@@ -40,7 +40,7 @@ public class Technician extends Person {
     private SubServe subServe;
 
     @OneToMany(mappedBy = "technician", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Offer> offers=new ArrayList<>();
+    private List<Offer> offers = new ArrayList<>();
 
     public Technician(String firstname, String lastname, String email, String username
             , String password, LocalDate signUpTime, Role role) {

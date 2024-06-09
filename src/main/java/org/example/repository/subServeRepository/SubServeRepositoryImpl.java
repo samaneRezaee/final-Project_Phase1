@@ -37,4 +37,15 @@ public class SubServeRepositoryImpl extends BaseRepositoryImpl<SubServe, Long> i
         subServeList=subServeQueryAll.getResultList();
         return subServeList;
     }
+
+    @Override
+    public List<SubServe> findByServeId(Long id) {
+        List<SubServe> subServeList=null;
+        Session session = SessionFactorySingleton.getInstance().openSession();
+        String hqlLoadFindSub = "FROM SubServe s WHERE s.serve.id = :id";
+        Query<SubServe> subServeQueryAll=session.createQuery(hqlLoadFindSub, SubServe.class);
+        subServeQueryAll.setParameter("id",id);
+        subServeList=subServeQueryAll.getResultList();
+        return subServeList;
+    }
 }

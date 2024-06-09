@@ -8,4 +8,6 @@ import java.util.List;
 public interface SubServeRepository extends BaseRepository<SubServe, Long> {
     boolean isExistSubServe(String title);
     List<SubServe> loadAllSubServe();
+
+    List<SubServe> findByServeId(Long id);
 }

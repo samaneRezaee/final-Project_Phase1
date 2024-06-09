@@ -19,14 +19,13 @@ import java.util.List;
 @OnDelete(action = OnDeleteAction.CASCADE)
 public class Customer extends Person {
 
-    @OneToMany(mappedBy = "customer",cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Request> requestList = new ArrayList<>();
 
     @OneToMany(mappedBy = "customer", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
-    private List<Comment> commentList=new ArrayList<>();
+    private List<Comment> commentList = new ArrayList<>();
 
     public Customer(String firstname, String lastname, String email, String username, String password, LocalDate signUpTime, Role role) {
         super(firstname, lastname, email, username, password, signUpTime, role);
     }
-
 }
